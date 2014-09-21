@@ -7,19 +7,58 @@ output:
 
 
 ## Loading and preprocessing the data
+* After reading the table, I'll check what each column is.
+```{r}
+setwd("/Users/jinyang/RepData_PeerAssessment1")
+data <- read.csv("activity.csv")
+head(data)
 
-
+```
 
 ## What is mean total number of steps taken per day?
+* Steps taken per day is recorded in column 1
+```{r}
+u <- is.na(data[,1])
+data_clean <- data[!u,]
+data_sum <- aggregate(steps~date,sum,data = data_clean)
+hist(data_sum[,2],col="gray",main = paste("Histograom of daily step"),xlab="total steps every day")
+data_mean <- aggregate(steps~date,mean,data = data_clean)
+data_median <- aggregate(steps~date,median,data = data_clean)
+data_mean
+data_median
 
-
+```
 
 ## What is the average daily activity pattern?
+```{r}
+data_intervmean <-aggregate(steps~interval,mean,data=data_clean)
+plot(data_intervmean[,1],data_intervmean[,2],type = "l",main = "Plot of steps at different intervals", xlab="Interval, min", ylab = "Steps averaged over all days")
 
-
+a<- max(data_intervmean[,2])
+b<- match(c(a),data_intervmean[,2])
+Intervalmax <- data_intervmean[b,1]
+Intervalmax
+```
+* The interval that has the maximum steps is `Intervalmax` min.
 
 ## Imputing missing values
+```{r}
+mising_sum <- sum(u)
+data2<-data
+for (i  1:length(data2))
+{    if (is.na(data2[i,1]))
+    {   inte<-data2[i,3]
+        c<-match(c(int),data_intervmean[,1])
+        data2[i,1]<-data_intervmean[c,2]
+    }
+}
 
-
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+data3 <- data
+for(i in 1:length(data3))
+  {
+  data3[i,4]<-weekday(data3[i,2])
+  }
